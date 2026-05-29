@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PT站点魔力计算器
 // @namespace    https://github.com/neoblackxt/PTMyBonusCalc
-// @version      2.3.2
+// @version      2.3.3
 // @description  在使用NexusPHP架构的PT站点显示每个种子的A值和每GB的A值。
 // @author       neoblackxt, LaneLau
 // @require      https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
@@ -363,6 +363,58 @@ function isIgnoredSite() {
     let hostname = getSiteKey()
     let ignoredHosts = ['qingwapt.com', 'audiences.me', 'hdarea.club', 'hhanclub.net', 'monikadesign.uk']
     return ignoredHosts.some(site => hostname === site || hostname.endsWith('.' + site))
+}
+
+function getCurrentRouteName(href) {
+    try {
+        let path = new URL(href, window.location.href).pathname.toLowerCase()
+        let segment = path.replace(/^\/+/, '').split('/')[0]
+        return segment.replace(/\.php$/, '')
+    } catch (error) {
+        return ''
+    }
+}
+
+function countNexusRouteLinks() {
+    let nexusRoutes = [
+        'torrents', 'mybonus', 'userdetails', 'usercp', 'forums', 'messages',
+        'logout', 'upload', 'offers', 'subtitles', 'rules', 'faq',
+        'attendance', 'bookmark', 'viewrequests', 'staff', 'topten', 'log'
+    ]
+    let routes = {}
+    document.querySelectorAll('a[href]').forEach(link => {
+        let route = getCurrentRouteName(link.getAttribute('href'))
+        if (nexusRoutes.indexOf(route) !== -1) {
+            routes[route] = true
+        }
+    })
+    return Object.keys(routes).length
+}
+
+function isNexusPHPPage() {
+    let html = document.documentElement ? document.documentElement.innerHTML : ''
+    if (/Powered\s+by\s+NexusPHP|NexusPHP/i.test(html)) {
+        return true
+    }
+
+    let hasNexusDom = Boolean(document.querySelector(
+        'td.colhead, th.colhead, td.rowfollow, .rowfollow, table.torrents, table.main, #outer, #info_block'
+    ))
+    let routeCount = countNexusRouteLinks()
+    if (hasNexusDom && routeCount >= 3) {
+        return true
+    }
+
+    let text = document.body ? document.body.innerText : ''
+    let hasBonusFormulaText = /T0\s*(?:=|:|：)|N0\s*(?:=|:|：)|B0\s*(?:=|:|：)|魔力值|魔力值系统/.test(text)
+    return isBonusParamPage() && hasBonusFormulaText && routeCount >= 3
+}
+
+function shouldActivatePage() {
+    if (isIgnoredSite()) {
+        return false
+    }
+    return isMTeam || isNexusPHPPage()
 }
 
 function getStoredParam(name) {
@@ -827,21 +879,20 @@ let isMybonusPage = isBonusParamPage()
 if (window.location.toString().indexOf("tjupt.org") != -1) {
     isMybonusPage = window.location.toString().indexOf("bonus.php") != -1
 }
-if (isIgnoredSite()) {
-    // ignore sites with unsupported or incompatible bonus formulas
-} else if (isMTeam) {
+let shouldActivate = shouldActivatePage()
+if (shouldActivate && isMTeam) {
     if (isMybonusPage || window.location.toString().indexOf("browse") != -1) {
         MTteamWaitPageLoadAndRun()
     }
-} else {
+} else if (shouldActivate) {
     run()
 }
 
 var currentUrl = window.location.href;
-if (!isIgnoredSite() && window.onurlchange === null) {
+if (shouldActivate && isMTeam && window.onurlchange === null) {
     // M-Team 页面局部刷新时重新运行函数
     window.addEventListener('urlchange', (info) => {
-        if (!isIgnoredSite()) {
+        if (shouldActivatePage()) {
             MTteamWaitPageLoadAndRun()
         }
     });
