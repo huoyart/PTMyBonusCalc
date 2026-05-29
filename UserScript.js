@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PT站点魔力计算器
 // @namespace    https://github.com/neoblackxt/PTMyBonusCalc
-// @version      2.3.0
+// @version      2.3.1
 // @description  在使用NexusPHP架构的PT站点显示每个种子的A值和每GB的A值。
 // @author       neoblackxt, LaneLau
 // @require      https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
@@ -142,6 +142,8 @@
 // @match        *://*.momentpt.top/torrents*
 // @match        *://monikadesign.uk/torrents*
 // @match        *://*.monikadesign.uk/torrents*
+// @exclude      *://monikadesign.uk/users/*/bonus/formula*
+// @exclude      *://*.monikadesign.uk/users/*/bonus/formula*
 // @match        *://morethantv.me/torrents*
 // @match        *://*.morethantv.me/torrents*
 // @match        *://mua.xloli.cc/torrents*
@@ -381,6 +383,12 @@ function setStoredParam(name, value) {
 
 function isBonusParamPage() {
     return /\/(?:mybonus|bonus)(?:\.php)?(?:[?#/]|$)/i.test(window.location.pathname)
+}
+
+function isExcludedPage() {
+    let hostname = (window.location.hostname || '').replace(/^www\./, '')
+    return (hostname === 'monikadesign.uk' || hostname.endsWith('.monikadesign.uk'))
+        && /^\/users\/[^/]+\/bonus\/formula\/?$/i.test(window.location.pathname)
 }
 
 function parseFirstNumber(text) {
@@ -933,7 +941,9 @@ let isMybonusPage = isBonusParamPage()
 if (window.location.toString().indexOf("tjupt.org") != -1) {
     isMybonusPage = window.location.toString().indexOf("bonus.php") != -1
 }
-if (isMTeam) {
+if (isExcludedPage()) {
+    // skip unsupported pages that users may have matched manually
+} else if (isMTeam) {
     if (isMybonusPage || window.location.toString().indexOf("browse") != -1) {
         MTteamWaitPageLoadAndRun()
     }
@@ -942,7 +952,11 @@ if (isMTeam) {
 }
 
 var currentUrl = window.location.href;
-if (window.onurlchange === null) {
+if (!isExcludedPage() && window.onurlchange === null) {
     // M-Team 页面局部刷新时重新运行函数
-    window.addEventListener('urlchange', (info) => MTteamWaitPageLoadAndRun());
+    window.addEventListener('urlchange', (info) => {
+        if (!isExcludedPage()) {
+            MTteamWaitPageLoadAndRun()
+        }
+    });
 }
