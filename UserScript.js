@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PT站点魔力计算器
 // @namespace    https://github.com/neoblackxt/PTMyBonusCalc
-// @version      2.1.0
+// @version      2.2.0
 // @description  在使用NexusPHP架构的PT站点显示每个种子的A值和每GB的A值。
 // @author       neoblackxt, LaneLau
 // @require      https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
@@ -26,6 +26,8 @@
 // @match        *://*.anthelion.me/torrents*
 // @match        *://audiences.me/torrents*
 // @match        *://*.audiences.me/torrents*
+// @match        *://audiences.me/mybonus*
+// @match        *://*.audiences.me/mybonus*
 // @match        *://azusa.wiki/torrents*
 // @match        *://*.azusa.wiki/torrents*
 // @match        *://beyond-hd.me/torrents*
@@ -86,6 +88,8 @@
 // @match        *://*.hawke.uno/torrents*
 // @match        *://hdarea.club/torrents*
 // @match        *://*.hdarea.club/torrents*
+// @match        *://hdarea.club/mybonus*
+// @match        *://*.hdarea.club/mybonus*
 // @match        *://hdbao.cc/torrents*
 // @match        *://*.hdbao.cc/torrents*
 // @match        *://hdcity.city/torrents*
@@ -108,6 +112,8 @@
 // @match        *://*.hdvideo.top/torrents*
 // @match        *://hhanclub.net/torrents*
 // @match        *://*.hhanclub.net/torrents*
+// @match        *://hhanclub.net/mybonus*
+// @match        *://*.hhanclub.net/mybonus*
 // @match        *://hitpt.com/torrents*
 // @match        *://*.hitpt.com/torrents*
 // @match        *://htpt.cc/torrents*
@@ -348,6 +354,31 @@ function getBonusParamsFromPage() {
     }
 }
 
+function getSiteKey() {
+    return (window.location.hostname || window.location.host || '').replace(/^www\./, '')
+}
+
+function getLegacySiteKey() {
+    let match = (window.location.host || '').match(/\b[^\.]+\.[^\.]+$/)
+    return match ? match[0] : getSiteKey()
+}
+
+function getStoredParam(name) {
+    let value = GM_getValue(host + "." + name)
+    if (!value && legacyHost && legacyHost !== host) {
+        value = GM_getValue(legacyHost + "." + name)
+    }
+    return value
+}
+
+function setStoredParam(name, value) {
+    GM_setValue(host + "." + name, value)
+}
+
+function isBonusParamPage() {
+    return /\/(?:mybonus|bonus)(?:\.php)?(?:[?#/]|$)/i.test(window.location.pathname)
+}
+
 function parseFirstNumber(text) {
     let match = (text || '').replace(/,/g, '').match(/\d+(?:\.\d+)?/)
     return match ? parseFloat(match[0]) : undefined
@@ -389,15 +420,88 @@ function getMTeamCurrentSeeding() {
     return match ? parseInt(match[1]) : undefined
 }
 
+function getCellSignature($cell) {
+    let imageMeta = $cell.find('img').map(function () {
+        return [
+            this.className,
+            this.alt,
+            this.title,
+            this.src
+        ].join(' ')
+    }).get().join(' ')
+    return [
+        $cell.text(),
+        $cell.attr('title'),
+        imageMeta,
+        $cell.html()
+    ].join(' ').toLowerCase()
+}
+
+function detectTorrentColumns($headerRow) {
+    let columns = {time: null, size: null, seeders: null}
+    $headerRow.children('td,th').each(function (col) {
+        let $cell = jQuery(this)
+        let sig = getCellSignature($cell)
+        if (columns.time == null && (
+            $cell.find('img.time').length ||
+            /\btime\b|added|date|publish|發布|发布|時間|时间/.test(sig)
+        )) {
+            columns.time = col
+        } else if (columns.size == null && (
+            $cell.find('img.size').length ||
+            /\bsize\b|大小|體積|体积/.test(sig)
+        )) {
+            columns.size = col
+        } else if (columns.seeders == null && (
+            $cell.find('img.seeders').length ||
+            /seeders?|做種|做种|做種者|做种者|種子數|种子数/.test(sig)
+        )) {
+            columns.seeders = col
+        }
+    })
+    return columns
+}
+
+function getGeneralSeedRows($) {
+    let selectors = [
+        '.torrents:last-of-type>tbody>tr',
+        'table.torrents:last-of-type>tbody>tr',
+        'table#torrent_table>tbody>tr',
+        'table[class*="torrent"]:last-of-type>tbody>tr'
+    ]
+    for (let selector of selectors) {
+        let rows = $(selector)
+        if (rows.length > 1) {
+            return rows
+        }
+    }
+
+    let bestRows = $()
+    $('table').each(function () {
+        let rows = $(this).find('tbody>tr')
+        if (rows.length <= 1) {
+            rows = $(this).find('tr')
+        }
+        if (rows.length <= 1) {
+            return
+        }
+        let columns = detectTorrentColumns(rows.first())
+        if (columns.time != null && columns.size != null && columns.seeders != null) {
+            bestRows = rows
+        }
+    })
+    return bestRows
+}
+
 function run() {
     var $ = jQuery;
 
 
     let argsReady = true;
-    let T0 = GM_getValue(host + ".T0");
-    let N0 = GM_getValue(host + ".N0");
-    let B0 = GM_getValue(host + ".B0");
-    let L = GM_getValue(host + ".L");
+    let T0 = getStoredParam("T0");
+    let N0 = getStoredParam("N0");
+    let B0 = getStoredParam("B0");
+    let L = getStoredParam("L");
     if (!(T0 && N0 && B0 && L)) {
         argsReady = false
         if (!isMybonusPage) {
@@ -429,10 +533,10 @@ function run() {
                 alert("魔力值参数获取失败,请将Tampermonkey的配置模式修改为高级后手动修改存储配置参数，详见说明文档")
             }
 
-            GM_setValue(host + ".T0", T0);
-            GM_setValue(host + ".N0", N0);
-            GM_setValue(host + ".B0", B0);
-            GM_setValue(host + ".L", L);
+            setStoredParam("T0", T0);
+            setStoredParam("N0", N0);
+            setStoredParam("B0", B0);
+            setStoredParam("L", L);
 
         }
 
@@ -551,17 +655,21 @@ function run() {
      * @param i_N 做种人数人数所在列
      */
     function makeA($this, i_T, i_S, i_N) {
-        var time = $this.children('td:eq(' + i_T + ')').find("span").attr("title");
+        let $cells = $this.children('td,th')
+        var time = $cells.eq(i_T).find("span").attr("title");
         // 适配m-team的发生时间
         if (time == undefined || time == "") {
-            time = $this.children('td:eq(' + i_T + ')').find("span").text();
+            time = $cells.eq(i_T).find("span").text();
         }
         // 适配tjupt的发生时间
         if (time == undefined || time == "") {
-            time = $this.children('td:eq(' + i_T + ')').html().replace("<br>", " ").trim();
+            time = ($cells.eq(i_T).html() || '').replace("<br>", " ").trim();
+        }
+        if (time == undefined || time == "") {
+            time = $cells.eq(i_T).text().trim();
         }
         var T = (new Date().getTime() - new Date(time).getTime()) / 1e3 / 86400 / 7;
-        var size = $this.children('td:eq(' + i_S + ')').text().trim();
+        var size = $cells.eq(i_S).text().trim();
         var size_tp = 1;
         var S = size.replace(/[KMGT]i?B/, function (tp) {
             if (tp == "KB" || tp == "KiB") {
@@ -577,9 +685,12 @@ function run() {
         });
         S = parseFloat(S) * size_tp;
         //var number = $this.children('td:eq(' + i_N + ')').text().trim();
-        var number = $this.children('td:eq(' + i_N + ')').text().trim().replace(/,/g, ''); // 获取人数，删除多余符号
+        var number = $cells.eq(i_N).text().trim().replace(/,/g, ''); // 获取人数，删除多余符号
         //console.log(number);
         var N = parseInt(number);
+        if (!Number.isFinite(T) || !Number.isFinite(S) || !Number.isFinite(N)) {
+            return '<span title="无法解析发布时间、体积或做种人数">--</span>';
+        }
         var A = calcA(T, S, N).toFixed(2);
         var ave = (A / S).toFixed(2);
 
@@ -598,27 +709,32 @@ function run() {
 
     function addDataColGeneral() {
         var i_T, i_S, i_N
-        $(seedTableSelector).each(function (row) {
+        let rows = getGeneralSeedRows($)
+        if (!rows.length) {
+            return
+        }
+        let addFlag = false
+        rows.each(function (row) {
             var $this = $(this);
             if (row == 0) {
-                $this.children('td').each(function (col) {
-
-                    if ($(this).find('img.time').length) {
-                        i_T = col
-                    } else if ($(this).find('img.size').length) {
-                        i_S = col
-                    } else if ($(this).find('img.seeders').length) {
-                        i_N = col
-                    }
-                })
-                if (!i_T || !i_S || !i_N) {
+                addFlag = $this.text().indexOf('A@A/GB') != -1
+                let columns = detectTorrentColumns($this)
+                i_T = columns.time
+                i_S = columns.size
+                i_N = columns.seeders
+                if (i_T == null || i_S == null || i_N == null) {
                     alert('未能找到数据列')
                     return
                 }
-                $this.children("td:last").before("<td class=\"colhead\" title=\"A值@每GB的A值\">A@A/GB</td>");
+                if (!addFlag) {
+                    $this.children("td,th").last().before("<td class=\"colhead\" title=\"A值@每GB的A值\">A@A/GB</td>");
+                }
             } else {
+                if (i_T == null || i_S == null || i_N == null || addFlag) {
+                    return
+                }
                 var textA = makeA($this, i_T, i_S, i_N)
-                $this.children("td:last").before("<td class=\"rowfollow\">" + textA + "</td>");
+                $this.children("td,th").last().before("<td class=\"rowfollow\">" + textA + "</td>");
             }
         })
     }
@@ -667,7 +783,7 @@ function MTteamWaitPageLoadAndRun() {
     let T0Found = false
     let seedTableFound = false
     // 页面局部刷新后重新判断 isMybonusPage
-    isMybonusPage = window.location.toString().indexOf("mybonus") != -1
+    isMybonusPage = isBonusParamPage()
     let itv = setInterval(() => {
 
         if (isMybonusPage) {
@@ -701,10 +817,11 @@ function MTteamWaitPageLoadAndRun() {
     }, 100)
 }
 
-let host = window.location.host.match(/\b[^\.]+\.[^\.]+$/)[0]
+let host = getSiteKey()
+let legacyHost = getLegacySiteKey()
 let isMTeam = window.location.toString().indexOf("m-team") != -1
 let seedTableSelector = isMTeam ? 'div.mt-4>table>tbody>tr' : '.torrents:last-of-type>tbody>tr'
-let isMybonusPage = window.location.toString().indexOf("mybonus") != -1
+let isMybonusPage = isBonusParamPage()
 if (window.location.toString().indexOf("tjupt.org") != -1) {
     isMybonusPage = window.location.toString().indexOf("bonus.php") != -1
 }
