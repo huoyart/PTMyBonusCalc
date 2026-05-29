@@ -17,6 +17,19 @@
 
 ![](https://s2.loli.net/2022/02/04/kLu13N2l87zYTBa.png)
 
+### 支持范围与适配说明
+
+当前脚本已将 [PT监护室](https://savept.icu/) 中标记为“健康”的 140 个 PT 站点加入匹配规则，并同时覆盖主域名和子域名的 `torrents*` 页面。
+
+需要注意：加入匹配规则只代表脚本会在这些站点页面注入，不代表每个站点都已经完成表格结构适配。普通站点仍主要按 NexusPHP 类种子列表解析；如果站点使用了非标准表格、前端重构页面、不同的时间/体积/做种人数列结构，可能需要单独适配。
+
+M-Team 已做单独适配，覆盖：
+
+- `kp.m-team.cc`
+- `zp.m-team.io`
+
+M-Team 的 `/mybonus` 页面参数提取已支持新版文本结构，例如 `T0為參數。T0 = 4`、`N0 = 7`、`B0 = 50`、`L = 300`。
+
 ### 使用
 
 脚本安装：https://greasyfork.org/en/scripts/439369-pt站点魔力计算器
@@ -27,11 +40,11 @@
 
 ### 参与开发
 
-https://github.com/neoblackxt/PTMyBonusCalc
+https://github.com/huoyart/PTMyBonusCalc
 
 ### 问题反馈
 
-https://github.com/neoblackxt/PTMyBonusCalc/issues
+https://github.com/huoyart/PTMyBonusCalc/issues
 
 请将不支持的站点的种子列表和魔力值网页源代码粘贴在issue中，**注意把你的网站ID信息以及其他敏感信息删除，但不要破环网页结构** 不知道怎么删除请不要发出来（Ctrl + U 查看网页源代码，Ctrl + S 保存文件）。
 
