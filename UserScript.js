@@ -6,34 +6,291 @@
 // @author       neoblackxt, LaneLau
 // @require      https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
 // @require      https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js
-// @match        *://*.beitai.pt/torrents*
-// @match        *://*.pttime.org/torrents*
-// @match        *://*.ptsbao.club/torrents*
-// @match        *://*.pthome.net/torrents*
 // @match        *://kp.m-team.cc/*
 // @match        *://zp.m-team.io/*
-// @match        *://*.hddolby.com/torrents*
-// @match        *://*.leaguehd.com/torrents*
-// @match        *://*.hdhome.org/torrents*
-// @match        *://*.hdsky.me/torrents*
-// @match        *://*.ourbits.club/torrents*
-// @match        *://*.u2.dmhy.org/torrents*
-// @match        *://*.hdzone.me/torrents*
-// @match        *://*.hdatmos.club/torrents*
-// @match        *://*.pt.soulvoice.club/torrents*
-// @match        *://*.pt.soulvoice.club/live*
-// @match        *://*.discfan.net/torrents*
-// @match        *://*.hdtime.org/torrents*
-// @match        *://*.nicept.net/torrents*
-// @match        *://*.pterclub.com/torrents*
-// @match        *://*.hdarea.co/torrents*
-// @match        *://*.hdfans.org/torrents*
-// @match        *://pt.btschool.club/torrents*
+// @match        *://13city.org/torrents*
+// @match        *://*.13city.org/torrents*
+// @match        *://1ptba.com/torrents*
 // @match        *://*.1ptba.com/torrents*
-// @match        *://www.oshen.win/torrents*
-// @match        *://*.rousi.zip/torrents*
+// @match        *://52movie.top/torrents*
+// @match        *://*.52movie.top/torrents*
+// @match        *://52pt.site/torrents*
+// @match        *://*.52pt.site/torrents*
+// @match        *://aither.cc/torrents*
+// @match        *://*.aither.cc/torrents*
+// @match        *://alpharatio.cc/torrents*
+// @match        *://*.alpharatio.cc/torrents*
+// @match        *://animez.to/torrents*
+// @match        *://*.animez.to/torrents*
+// @match        *://anthelion.me/torrents*
+// @match        *://*.anthelion.me/torrents*
+// @match        *://audiences.me/torrents*
+// @match        *://*.audiences.me/torrents*
+// @match        *://azusa.wiki/torrents*
+// @match        *://*.azusa.wiki/torrents*
+// @match        *://beyond-hd.me/torrents*
+// @match        *://*.beyond-hd.me/torrents*
+// @match        *://bilibili.download/torrents*
+// @match        *://*.bilibili.download/torrents*
+// @match        *://bitporn.eu/torrents*
+// @match        *://*.bitporn.eu/torrents*
+// @match        *://brokenstones.is/torrents*
+// @match        *://*.brokenstones.is/torrents*
+// @match        *://cangbao.ge/torrents*
+// @match        *://*.cangbao.ge/torrents*
+// @match        *://carpt.net/torrents*
+// @match        *://*.carpt.net/torrents*
+// @match        *://clearjav.com/torrents*
+// @match        *://*.clearjav.com/torrents*
+// @match        *://crabpt.vip/torrents*
+// @match        *://*.crabpt.vip/torrents*
+// @match        *://cspt.top/torrents*
+// @match        *://*.cspt.top/torrents*
+// @match        *://cyanbug.net/torrents*
+// @match        *://*.cyanbug.net/torrents*
+// @match        *://dicmusic.com/torrents*
+// @match        *://*.dicmusic.com/torrents*
+// @match        *://discfan.net/torrents*
+// @match        *://*.discfan.net/torrents*
+// @match        *://dragonhd.xyz/torrents*
+// @match        *://*.dragonhd.xyz/torrents*
+// @match        *://dstudio.me/torrents*
+// @match        *://*.dstudio.me/torrents*
+// @match        *://dubhe.site/torrents*
+// @match        *://*.dubhe.site/torrents*
+// @match        *://duckboobee.org/torrents*
+// @match        *://*.duckboobee.org/torrents*
+// @match        *://empornium.sx/torrents*
+// @match        *://*.empornium.sx/torrents*
+// @match        *://et8.org/torrents*
+// @match        *://*.et8.org/torrents*
+// @match        *://exoticaz.to/torrents*
+// @match        *://*.exoticaz.to/torrents*
+// @match        *://fappaizuri.me/torrents*
+// @match        *://*.fappaizuri.me/torrents*
+// @match        *://fearnopeer.com/torrents*
+// @match        *://*.fearnopeer.com/torrents*
+// @match        *://filelist.io/torrents*
+// @match        *://*.filelist.io/torrents*
+// @match        *://gamegamept.com/torrents*
+// @match        *://*.gamegamept.com/torrents*
+// @match        *://generation-free.org/torrents*
+// @match        *://*.generation-free.org/torrents*
+// @match        *://greatposterwall.com/torrents*
+// @match        *://*.greatposterwall.com/torrents*
+// @match        *://haidan.cc/torrents*
+// @match        *://*.haidan.cc/torrents*
+// @match        *://happyfappy.net/torrents*
+// @match        *://*.happyfappy.net/torrents*
+// @match        *://hawke.uno/torrents*
+// @match        *://*.hawke.uno/torrents*
+// @match        *://hdarea.club/torrents*
+// @match        *://*.hdarea.club/torrents*
+// @match        *://hdbao.cc/torrents*
+// @match        *://*.hdbao.cc/torrents*
+// @match        *://hdcity.city/torrents*
+// @match        *://*.hdcity.city/torrents*
+// @match        *://hddolby.com/torrents*
+// @match        *://*.hddolby.com/torrents*
+// @match        *://hdfans.org/torrents*
+// @match        *://*.hdfans.org/torrents*
+// @match        *://hdhome.org/torrents*
+// @match        *://*.hdhome.org/torrents*
+// @match        *://hdkyl.in/torrents*
+// @match        *://*.hdkyl.in/torrents*
+// @match        *://hdsky.me/torrents*
+// @match        *://*.hdsky.me/torrents*
+// @match        *://hdtime.org/torrents*
+// @match        *://*.hdtime.org/torrents*
+// @match        *://hd-torrents.org/torrents*
+// @match        *://*.hd-torrents.org/torrents*
+// @match        *://hdvideo.top/torrents*
+// @match        *://*.hdvideo.top/torrents*
+// @match        *://hhanclub.net/torrents*
+// @match        *://*.hhanclub.net/torrents*
+// @match        *://hitpt.com/torrents*
+// @match        *://*.hitpt.com/torrents*
+// @match        *://htpt.cc/torrents*
+// @match        *://*.htpt.cc/torrents*
+// @match        *://hxpt.org/torrents*
+// @match        *://*.hxpt.org/torrents*
+// @match        *://iptorrents.com/torrents*
+// @match        *://*.iptorrents.com/torrents*
+// @match        *://jpopsuki.eu/torrents*
+// @match        *://*.jpopsuki.eu/torrents*
+// @match        *://kamept.com/torrents*
+// @match        *://*.kamept.com/torrents*
+// @match        *://kp.m-team.cc/torrents*
+// @match        *://*.kp.m-team.cc/torrents*
+// @match        *://kufei.org/torrents*
 // @match        *://*.kufei.org/torrents*
+// @match        *://lemonhd.net/torrents*
+// @match        *://*.lemonhd.net/torrents*
+// @match        *://longpt.org/torrents*
+// @match        *://*.longpt.org/torrents*
+// @match        *://lst.gg/torrents*
+// @match        *://*.lst.gg/torrents*
+// @match        *://milkie.cc/torrents*
+// @match        *://*.milkie.cc/torrents*
+// @match        *://momentpt.top/torrents*
+// @match        *://*.momentpt.top/torrents*
+// @match        *://monikadesign.uk/torrents*
+// @match        *://*.monikadesign.uk/torrents*
+// @match        *://morethantv.me/torrents*
+// @match        *://*.morethantv.me/torrents*
+// @match        *://mua.xloli.cc/torrents*
+// @match        *://*.mua.xloli.cc/torrents*
+// @match        *://musopia.vip/torrents*
+// @match        *://*.musopia.vip/torrents*
+// @match        *://myanonamouse.net/torrents*
+// @match        *://*.myanonamouse.net/torrents*
+// @match        *://nanyangpt.com/torrents*
+// @match        *://*.nanyangpt.com/torrents*
+// @match        *://nebulance.io/torrents*
+// @match        *://*.nebulance.io/torrents*
+// @match        *://nicept.net/torrents*
+// @match        *://*.nicept.net/torrents*
+// @match        *://njtupt.top/torrents*
+// @match        *://*.njtupt.top/torrents*
+// @match        *://okpt.net/torrents*
+// @match        *://*.okpt.net/torrents*
+// @match        *://open.cd/torrents*
+// @match        *://*.open.cd/torrents*
+// @match        *://orpheus.network/torrents*
+// @match        *://*.orpheus.network/torrents*
+// @match        *://our.kelu.one/torrents*
+// @match        *://*.our.kelu.one/torrents*
+// @match        *://ourbits.club/torrents*
+// @match        *://*.ourbits.club/torrents*
+// @match        *://p.t-baozi.cc/torrents*
+// @match        *://*.p.t-baozi.cc/torrents*
+// @match        *://pandapt.net/torrents*
+// @match        *://*.pandapt.net/torrents*
+// @match        *://piggo.me/torrents*
+// @match        *://*.piggo.me/torrents*
+// @match        *://playlet.cc/torrents*
+// @match        *://*.playlet.cc/torrents*
+// @match        *://pt.0ff.cc/torrents*
+// @match        *://*.pt.0ff.cc/torrents*
+// @match        *://pt.agsvpt.cn/torrents*
+// @match        *://*.pt.agsvpt.cn/torrents*
+// @match        *://pt.aling.de/torrents*
+// @match        *://*.pt.aling.de/torrents*
+// @match        *://pt.btschool.club/torrents*
+// @match        *://*.pt.btschool.club/torrents*
+// @match        *://pt.cdy.skin/torrents*
+// @match        *://*.pt.cdy.skin/torrents*
+// @match        *://pt.eastgame.org/torrents*
+// @match        *://*.pt.eastgame.org/torrents*
+// @match        *://pt.gtkpw.xyz/torrents*
+// @match        *://*.pt.gtkpw.xyz/torrents*
+// @match        *://pt.hdclone.top/torrents*
+// @match        *://*.pt.hdclone.top/torrents*
+// @match        *://pt.hdupt.com/torrents*
+// @match        *://*.pt.hdupt.com/torrents*
+// @match        *://pt.itzmx.com/torrents*
+// @match        *://*.pt.itzmx.com/torrents*
+// @match        *://pt.keepfrds.com/torrents*
+// @match        *://*.pt.keepfrds.com/torrents*
+// @match        *://pt.lajidui.top/torrents*
+// @match        *://*.pt.lajidui.top/torrents*
+// @match        *://pt.luckpt.de/torrents*
+// @match        *://*.pt.luckpt.de/torrents*
+// @match        *://pt.muxuege.org/torrents*
+// @match        *://*.pt.muxuege.org/torrents*
+// @match        *://pt.mypt.cc/torrents*
+// @match        *://*.pt.mypt.cc/torrents*
+// @match        *://pt.sjtu.edu.cn/torrents*
+// @match        *://*.pt.sjtu.edu.cn/torrents*
+// @match        *://pt.soulvoice.club/torrents*
+// @match        *://*.pt.soulvoice.club/torrents*
+// @match        *://pt.tey.cc/torrents*
+// @match        *://*.pt.tey.cc/torrents*
+// @match        *://pt.tu88.men/torrents*
+// @match        *://*.pt.tu88.men/torrents*
+// @match        *://pt.xingyungept.org/torrents*
+// @match        *://*.pt.xingyungept.org/torrents*
+// @match        *://pt.ying.us.kg/torrents*
+// @match        *://*.pt.ying.us.kg/torrents*
+// @match        *://ptcafe.club/torrents*
+// @match        *://*.ptcafe.club/torrents*
+// @match        *://ptchdbits.co/torrents*
+// @match        *://*.ptchdbits.co/torrents*
+// @match        *://pterclub.net/torrents*
+// @match        *://*.pterclub.net/torrents*
+// @match        *://ptfans.cc/torrents*
+// @match        *://*.ptfans.cc/torrents*
+// @match        *://pthome.net/torrents*
+// @match        *://*.pthome.net/torrents*
+// @match        *://ptlao.top/torrents*
+// @match        *://*.ptlao.top/torrents*
+// @match        *://ptlgs.org/torrents*
+// @match        *://*.ptlgs.org/torrents*
+// @match        *://ptsbao.club/torrents*
+// @match        *://*.ptsbao.club/torrents*
+// @match        *://ptskit.org/torrents*
+// @match        *://*.ptskit.org/torrents*
+// @match        *://pttime.org/torrents*
+// @match        *://*.pttime.org/torrents*
+// @match        *://ptzone.xyz/torrents*
+// @match        *://*.ptzone.xyz/torrents*
+// @match        *://qingwapt.com/torrents*
+// @match        *://*.qingwapt.com/torrents*
+// @match        *://raingfh.top/torrents*
+// @match        *://*.raingfh.top/torrents*
+// @match        *://rousi.pro/torrents*
+// @match        *://*.rousi.pro/torrents*
+// @match        *://sbpt.link/torrents*
+// @match        *://*.sbpt.link/torrents*
+// @match        *://sewerpt.com/torrents*
+// @match        *://*.sewerpt.com/torrents*
+// @match        *://si-qi.xyz/torrents*
+// @match        *://*.si-qi.xyz/torrents*
+// @match        *://sportscult.org/torrents*
+// @match        *://*.sportscult.org/torrents*
+// @match        *://springsunday.net/torrents*
+// @match        *://*.springsunday.net/torrents*
+// @match        *://star-space.net/torrents*
+// @match        *://*.star-space.net/torrents*
+// @match        *://sunnypt.top/torrents*
+// @match        *://*.sunnypt.top/torrents*
+// @match        *://tangpt.top/torrents*
+// @match        *://*.tangpt.top/torrents*
+// @match        *://tjupt.org/torrents*
 // @match        *://*.tjupt.org/torrents*
+// @match        *://tokyo-manga.top/torrents*
+// @match        *://*.tokyo-manga.top/torrents*
+// @match        *://torrentleech.cc/torrents*
+// @match        *://*.torrentleech.cc/torrents*
+// @match        *://totheglory.im/torrents*
+// @match        *://*.totheglory.im/torrents*
+// @match        *://tracker.novahd.top/torrents*
+// @match        *://*.tracker.novahd.top/torrents*
+// @match        *://u2.dmhy.org/torrents*
+// @match        *://*.u2.dmhy.org/torrents*
+// @match        *://ubits.club/torrents*
+// @match        *://*.ubits.club/torrents*
+// @match        *://ultrahd.net/torrents*
+// @match        *://*.ultrahd.net/torrents*
+// @match        *://web.yemapt.org/torrents*
+// @match        *://*.web.yemapt.org/torrents*
+// @match        *://wintersakura.net/torrents*
+// @match        *://*.wintersakura.net/torrents*
+// @match        *://xingtan.one/torrents*
+// @match        *://*.xingtan.one/torrents*
+// @match        *://xingwan.cc/torrents*
+// @match        *://*.xingwan.cc/torrents*
+// @match        *://yhpp.cc/torrents*
+// @match        *://*.yhpp.cc/torrents*
+// @match        *://zhuque.in/torrents*
+// @match        *://*.zhuque.in/torrents*
+// @match        *://zmpt.cc/torrents*
+// @match        *://*.zmpt.cc/torrents*
+// @match        *://zrpt.cc/torrents*
+// @match        *://*.zrpt.cc/torrents*
+// @match        *://pt.soulvoice.club/live*
+// @match        *://*.pt.soulvoice.club/live*
+// @match        *://tjupt.org/bonus*
 // @match        *://*.tjupt.org/bonus*
 // @match        *://*/mybonus*
 // @license      GPL License
@@ -50,6 +307,87 @@ const colorsOfAVE = [
     {min: 1.5, max: 2, color: '#8B4513', fontWeight: 800}, // 棕色
     {min: 2, max: Infinity, color: '#ff0000', fontWeight: 900} // 红色
 ]
+
+function extractBonusParam(text, name, allowLoose = true) {
+    if (!text) {
+        return undefined
+    }
+    let normalized = text.replace(/\s+/g, ' ')
+    let escapedName = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    let strictReg = new RegExp('(?:^|[^A-Za-z0-9])' + escapedName + '(?![A-Za-z0-9])\\s*(?:=|:|：)\\s*(\\d+(?:\\.\\d+)?)', 'i')
+    let strictMatch = normalized.match(strictReg)
+    if (strictMatch) {
+        return parseFloat(strictMatch[1])
+    }
+
+    if (!allowLoose || normalized.length > 120) {
+        return undefined
+    }
+    let looseReg = new RegExp('(?:^|[^A-Za-z0-9])' + escapedName + '(?![A-Za-z0-9])\\s+(\\d+(?:\\.\\d+)?)', 'i')
+    let looseMatch = normalized.match(looseReg)
+    return looseMatch ? parseFloat(looseMatch[1]) : undefined
+}
+
+function getBonusParamFromPage(name) {
+    let nodes = document.querySelectorAll('li, div, p, span, td, th, tr')
+    for (let node of nodes) {
+        let value = extractBonusParam(node.innerText, name)
+        if (Number.isFinite(value)) {
+            return value
+        }
+    }
+    return extractBonusParam(document.body ? document.body.innerText : '', name, false)
+}
+
+function getBonusParamsFromPage() {
+    return {
+        T0: getBonusParamFromPage('T0'),
+        N0: getBonusParamFromPage('N0'),
+        B0: getBonusParamFromPage('B0'),
+        L: getBonusParamFromPage('L')
+    }
+}
+
+function parseFirstNumber(text) {
+    let match = (text || '').replace(/,/g, '').match(/\d+(?:\.\d+)?/)
+    return match ? parseFloat(match[0]) : undefined
+}
+
+function getMTeamBasicBonus($) {
+    let basicBonus;
+    $("td:contains('基本獎勵')").each(function () {
+        if (Number.isFinite(basicBonus)) {
+            return false
+        }
+        let oldLayoutValue = parseFirstNumber($(this).next('td').next('td').text())
+        if (Number.isFinite(oldLayoutValue)) {
+            basicBonus = oldLayoutValue
+            return false
+        }
+        let values = $(this).nextAll('td').map(function () {
+            return parseFirstNumber($(this).text())
+        }).get().filter(Number.isFinite)
+        if (values.length) {
+            basicBonus = values[0]
+        }
+    });
+    return basicBonus
+}
+
+function getMTeamSeedingBonusRule() {
+    let text = document.body ? document.body.innerText.replace(/\s+/g, ' ') : ''
+    let match = text.match(/(\d+(?:\.\d+)?)\s*個魔力值\s*\*\s*你的做種數.*?最多計\s*(\d+)\s*個/)
+    return match ? {
+        perSeed: parseFloat(match[1]),
+        limit: parseInt(match[2])
+    } : undefined
+}
+
+function getMTeamCurrentSeeding() {
+    let text = document.body ? document.body.innerText.replace(/\s+/g, ' ') : ''
+    let match = text.match(/當前活動\s*[:：]\s*(\d+)/)
+    return match ? parseInt(match[1]) : undefined
+}
 
 function run() {
     var $ = jQuery;
@@ -69,10 +407,14 @@ function run() {
     if (isMybonusPage) {
 
         try {
-            T0 = parseInt($("li:has(b:contains('T0'))")[1].innerText.split(" = ")[1]);
-            N0 = parseInt($("li:has(b:contains('N0'))")[1].innerText.split(" = ")[1]);
-            B0 = parseInt($("li:has(b:contains('B0'))")[1].innerText.split(" = ")[1]);
-            L = parseInt($("li:has(b:contains('L'))")[1].innerText.split(" = ")[1]);
+            let params = getBonusParamsFromPage();
+            if (!(params.T0 && params.N0 && params.B0 && params.L)) {
+                throw new Error("未在页面文本中找到完整的 T0/N0/B0/L 参数");
+            }
+            T0 = params.T0;
+            N0 = params.N0;
+            B0 = params.B0;
+            L = params.L;
             console.log('数据提取成功:', T0, N0, B0, L);
         } catch (error) {
             console.error('数据提取过程中出现错误:', error);
@@ -109,18 +451,17 @@ function run() {
         }
 
         let A = isMTeam ? 0 : parseFloat($("div:contains(' (A = ')")[0].innerText.split(" = ")[1]);
-        let B = isMTeam ? parseFloat($("td:contains('基本獎勵')+td+td")[0].innerText) : calcB(A);
+        let B = isMTeam ? getMTeamBasicBonus($) : calcB(A);
+        if (isMTeam && !Number.isFinite(B)) {
+            alert("未找到M-Team基本獎勵，无法绘制 B-A 图");
+            return
+        }
         // 剔除M-Team的基本奖励中做种数奖励
         if (isMTeam) {
-            let matches = $("h5:contains('做種每小時將得到如下的魔力值')").next().children().first().text()
-                .match(/(\d+(\.\d+)?)個魔力值.*最多計(\d+)個/);
-            let seedingBonusPerSeed = parseFloat(matches[1]);
-            let seedingBonusLimit = parseInt(matches[3]);
-            let currentSeedingNode = $("span:contains('當前活動')").parent().clone();
-            currentSeedingNode.find('img').replaceWith(function () {
-                return "img";
-            });
-            let currentSeeding = parseInt(currentSeedingNode.text().match(/(\d+)/)[1]);
+            let seedingBonusRule = getMTeamSeedingBonusRule();
+            let seedingBonusPerSeed = seedingBonusRule ? seedingBonusRule.perSeed : 0;
+            let seedingBonusLimit = seedingBonusRule ? seedingBonusRule.limit : 0;
+            let currentSeeding = getMTeamCurrentSeeding() || 0;
             B = B - (currentSeeding > seedingBonusLimit ?
                 seedingBonusPerSeed * seedingBonusLimit : seedingBonusPerSeed * currentSeeding);
         }
@@ -330,7 +671,7 @@ function MTteamWaitPageLoadAndRun() {
     let itv = setInterval(() => {
 
         if (isMybonusPage) {
-            T0Found = $("li:has(b:contains('T0'))")[1]
+            T0Found = Number.isFinite(getBonusParamFromPage('T0'))
 
         }
         if (T0Found || seedTableFound || count >= 100) {
