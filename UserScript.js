@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PT站点魔力计算器
 // @namespace    https://github.com/neoblackxt/PTMyBonusCalc
-// @version      2.2.0
+// @version      2.2.1
 // @description  在使用NexusPHP架构的PT站点显示每个种子的A值和每GB的A值。
 // @author       neoblackxt, LaneLau
 // @require      https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
@@ -180,6 +180,8 @@
 // @match        *://*.pt.0ff.cc/torrents*
 // @match        *://pt.agsvpt.cn/torrents*
 // @match        *://*.pt.agsvpt.cn/torrents*
+// @match        *://agsvpt.com/torrents*
+// @match        *://*.agsvpt.com/torrents*
 // @match        *://pt.aling.de/torrents*
 // @match        *://*.pt.aling.de/torrents*
 // @match        *://pt.btschool.club/torrents*
@@ -242,6 +244,8 @@
 // @match        *://*.ptzone.xyz/torrents*
 // @match        *://qingwapt.com/torrents*
 // @match        *://*.qingwapt.com/torrents*
+// @match        *://qingwapt.com/mybonus*
+// @match        *://*.qingwapt.com/mybonus*
 // @match        *://raingfh.top/torrents*
 // @match        *://*.raingfh.top/torrents*
 // @match        *://rousi.pro/torrents*
