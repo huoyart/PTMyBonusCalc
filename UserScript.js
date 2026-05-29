@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PT站点魔力计算器
 // @namespace    https://github.com/neoblackxt/PTMyBonusCalc
-// @version      2.3.0
+// @version      2.3.4
 // @description  在使用NexusPHP架构的PT站点显示每个种子的A值和每GB的A值。
 // @author       neoblackxt, LaneLau
 // @require      https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
@@ -24,10 +24,6 @@
 // @match        *://*.animez.to/torrents*
 // @match        *://anthelion.me/torrents*
 // @match        *://*.anthelion.me/torrents*
-// @match        *://audiences.me/torrents*
-// @match        *://*.audiences.me/torrents*
-// @match        *://audiences.me/mybonus*
-// @match        *://*.audiences.me/mybonus*
 // @match        *://azusa.wiki/torrents*
 // @match        *://*.azusa.wiki/torrents*
 // @match        *://beyond-hd.me/torrents*
@@ -86,10 +82,6 @@
 // @match        *://*.happyfappy.net/torrents*
 // @match        *://hawke.uno/torrents*
 // @match        *://*.hawke.uno/torrents*
-// @match        *://hdarea.club/torrents*
-// @match        *://*.hdarea.club/torrents*
-// @match        *://hdarea.club/mybonus*
-// @match        *://*.hdarea.club/mybonus*
 // @match        *://hdbao.cc/torrents*
 // @match        *://*.hdbao.cc/torrents*
 // @match        *://hdcity.city/torrents*
@@ -110,10 +102,6 @@
 // @match        *://*.hd-torrents.org/torrents*
 // @match        *://hdvideo.top/torrents*
 // @match        *://*.hdvideo.top/torrents*
-// @match        *://hhanclub.net/torrents*
-// @match        *://*.hhanclub.net/torrents*
-// @match        *://hhanclub.net/mybonus*
-// @match        *://*.hhanclub.net/mybonus*
 // @match        *://hitpt.com/torrents*
 // @match        *://*.hitpt.com/torrents*
 // @match        *://htpt.cc/torrents*
@@ -140,8 +128,6 @@
 // @match        *://*.milkie.cc/torrents*
 // @match        *://momentpt.top/torrents*
 // @match        *://*.momentpt.top/torrents*
-// @match        *://monikadesign.uk/torrents*
-// @match        *://*.monikadesign.uk/torrents*
 // @match        *://morethantv.me/torrents*
 // @match        *://*.morethantv.me/torrents*
 // @match        *://mua.xloli.cc/torrents*
@@ -242,10 +228,6 @@
 // @match        *://*.pttime.org/torrents*
 // @match        *://ptzone.xyz/torrents*
 // @match        *://*.ptzone.xyz/torrents*
-// @match        *://qingwapt.com/torrents*
-// @match        *://*.qingwapt.com/torrents*
-// @match        *://qingwapt.com/mybonus*
-// @match        *://*.qingwapt.com/mybonus*
 // @match        *://raingfh.top/torrents*
 // @match        *://*.raingfh.top/torrents*
 // @match        *://rousi.pro/torrents*
@@ -303,6 +285,16 @@
 // @match        *://tjupt.org/bonus*
 // @match        *://*.tjupt.org/bonus*
 // @match        *://*/mybonus*
+// @exclude      *://qingwapt.com/*
+// @exclude      *://*.qingwapt.com/*
+// @exclude      *://audiences.me/*
+// @exclude      *://*.audiences.me/*
+// @exclude      *://hdarea.club/*
+// @exclude      *://*.hdarea.club/*
+// @exclude      *://hhanclub.net/*
+// @exclude      *://*.hhanclub.net/*
+// @exclude      *://monikadesign.uk/*
+// @exclude      *://*.monikadesign.uk/*
 // @license      GPL License
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -367,6 +359,32 @@ function getLegacySiteKey() {
     return match ? match[0] : getSiteKey()
 }
 
+function isIgnoredSite() {
+    let hostname = getSiteKey()
+    let ignoredHosts = ['qingwapt.com', 'audiences.me', 'hdarea.club', 'hhanclub.net', 'monikadesign.uk']
+    return ignoredHosts.some(site => hostname === site || hostname.endsWith('.' + site))
+}
+
+function getSiteDisabledKey() {
+    return host + ".disabledByInvalidBonusPage"
+}
+
+function isSiteDisabledByInvalidBonusPage() {
+    let value = GM_getValue(getSiteDisabledKey())
+    if (!value && legacyHost && legacyHost !== host) {
+        value = GM_getValue(legacyHost + ".disabledByInvalidBonusPage")
+    }
+    return value === true
+}
+
+function markSiteDisabledByInvalidBonusPage() {
+    GM_setValue(getSiteDisabledKey(), true)
+}
+
+function clearSiteDisabledByInvalidBonusPage() {
+    GM_setValue(getSiteDisabledKey(), false)
+}
+
 function getStoredParam(name) {
     let value = GM_getValue(host + "." + name)
     if (!value && legacyHost && legacyHost !== host) {
@@ -381,6 +399,10 @@ function setStoredParam(name, value) {
 
 function isBonusParamPage() {
     return /\/(?:mybonus|bonus)(?:\.php)?(?:[?#/]|$)/i.test(window.location.pathname)
+}
+
+function isMybonusParamPage() {
+    return /\/mybonus(?:\.php)?(?:[?#/]|$)/i.test(window.location.pathname)
 }
 
 function parseFirstNumber(text) {
@@ -603,8 +625,10 @@ function run() {
     }
     if (isMybonusPage) {
 
+        let pageParamsReady = false;
         try {
             let params = getBonusParamsFromPage();
+            pageParamsReady = areParamsReady(formulaProfile, params);
             if (Number.isFinite(params.T0)) {
                 T0 = params.T0;
             }
@@ -618,7 +642,7 @@ function run() {
                 L = params.L;
             }
             argsReady = areParamsReady(formulaProfile, getCurrentParams(T0, N0, B0, L));
-            if (!argsReady) {
+            if (!pageParamsReady) {
                 throw new Error("未在页面文本中找到当前站点公式所需参数: " + formulaProfile.requiredParams.join('/'));
             }
             console.log('数据提取成功:', T0, N0, B0, L);
@@ -626,7 +650,14 @@ function run() {
             console.error('数据提取过程中出现错误:', error);
         }
 
+        if (!pageParamsReady && isMybonusParamPage() && !isMTeam && formulaProfile.requiredParams.length) {
+            markSiteDisabledByInvalidBonusPage();
+            console.warn('mybonus 页面无法解析公式参数，已标记该站不启用 PT 魔力计算器。');
+            return
+        }
+
         if (argsReady) {
+            clearSiteDisabledByInvalidBonusPage();
             if (Number.isFinite(Number(T0))) {
                 setStoredParam("T0", T0);
             }
@@ -933,7 +964,9 @@ let isMybonusPage = isBonusParamPage()
 if (window.location.toString().indexOf("tjupt.org") != -1) {
     isMybonusPage = window.location.toString().indexOf("bonus.php") != -1
 }
-if (isMTeam) {
+if (isIgnoredSite() || (isSiteDisabledByInvalidBonusPage() && !isMybonusPage)) {
+    // skip ignored sites and sites whose mybonus page is not parseable
+} else if (isMTeam) {
     if (isMybonusPage || window.location.toString().indexOf("browse") != -1) {
         MTteamWaitPageLoadAndRun()
     }
@@ -942,7 +975,12 @@ if (isMTeam) {
 }
 
 var currentUrl = window.location.href;
-if (window.onurlchange === null) {
+if (!isIgnoredSite() && !(isSiteDisabledByInvalidBonusPage() && !isMybonusPage) && window.onurlchange === null) {
     // M-Team 页面局部刷新时重新运行函数
-    window.addEventListener('urlchange', (info) => MTteamWaitPageLoadAndRun());
+    window.addEventListener('urlchange', (info) => {
+        isMybonusPage = isBonusParamPage()
+        if (!isIgnoredSite() && !(isSiteDisabledByInvalidBonusPage() && !isMybonusPage)) {
+            MTteamWaitPageLoadAndRun()
+        }
+    });
 }
