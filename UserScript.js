@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         PT站点魔力计算器
 // @namespace    https://github.com/neoblackxt/PTMyBonusCalc
-// @version      2.3.2
+// @version      2.3.1
 // @description  在使用NexusPHP架构的PT站点显示每个种子的A值和每GB的A值。
 // @author       neoblackxt, LaneLau
 // @require      https://cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js
@@ -24,6 +24,10 @@
 // @match        *://*.animez.to/torrents*
 // @match        *://anthelion.me/torrents*
 // @match        *://*.anthelion.me/torrents*
+// @match        *://audiences.me/torrents*
+// @match        *://*.audiences.me/torrents*
+// @match        *://audiences.me/mybonus*
+// @match        *://*.audiences.me/mybonus*
 // @match        *://azusa.wiki/torrents*
 // @match        *://*.azusa.wiki/torrents*
 // @match        *://beyond-hd.me/torrents*
@@ -82,6 +86,10 @@
 // @match        *://*.happyfappy.net/torrents*
 // @match        *://hawke.uno/torrents*
 // @match        *://*.hawke.uno/torrents*
+// @match        *://hdarea.club/torrents*
+// @match        *://*.hdarea.club/torrents*
+// @match        *://hdarea.club/mybonus*
+// @match        *://*.hdarea.club/mybonus*
 // @match        *://hdbao.cc/torrents*
 // @match        *://*.hdbao.cc/torrents*
 // @match        *://hdcity.city/torrents*
@@ -102,6 +110,10 @@
 // @match        *://*.hd-torrents.org/torrents*
 // @match        *://hdvideo.top/torrents*
 // @match        *://*.hdvideo.top/torrents*
+// @match        *://hhanclub.net/torrents*
+// @match        *://*.hhanclub.net/torrents*
+// @match        *://hhanclub.net/mybonus*
+// @match        *://*.hhanclub.net/mybonus*
 // @match        *://hitpt.com/torrents*
 // @match        *://*.hitpt.com/torrents*
 // @match        *://htpt.cc/torrents*
@@ -128,6 +140,10 @@
 // @match        *://*.milkie.cc/torrents*
 // @match        *://momentpt.top/torrents*
 // @match        *://*.momentpt.top/torrents*
+// @match        *://monikadesign.uk/torrents*
+// @match        *://*.monikadesign.uk/torrents*
+// @exclude      *://monikadesign.uk/users/*/bonus/formula*
+// @exclude      *://*.monikadesign.uk/users/*/bonus/formula*
 // @match        *://morethantv.me/torrents*
 // @match        *://*.morethantv.me/torrents*
 // @match        *://mua.xloli.cc/torrents*
@@ -228,6 +244,10 @@
 // @match        *://*.pttime.org/torrents*
 // @match        *://ptzone.xyz/torrents*
 // @match        *://*.ptzone.xyz/torrents*
+// @match        *://qingwapt.com/torrents*
+// @match        *://*.qingwapt.com/torrents*
+// @match        *://qingwapt.com/mybonus*
+// @match        *://*.qingwapt.com/mybonus*
 // @match        *://raingfh.top/torrents*
 // @match        *://*.raingfh.top/torrents*
 // @match        *://rousi.pro/torrents*
@@ -285,16 +305,6 @@
 // @match        *://tjupt.org/bonus*
 // @match        *://*.tjupt.org/bonus*
 // @match        *://*/mybonus*
-// @exclude      *://qingwapt.com/*
-// @exclude      *://*.qingwapt.com/*
-// @exclude      *://audiences.me/*
-// @exclude      *://*.audiences.me/*
-// @exclude      *://hdarea.club/*
-// @exclude      *://*.hdarea.club/*
-// @exclude      *://hhanclub.net/*
-// @exclude      *://*.hhanclub.net/*
-// @exclude      *://monikadesign.uk/*
-// @exclude      *://*.monikadesign.uk/*
 // @license      GPL License
 // @grant        GM_setValue
 // @grant        GM_getValue
@@ -359,12 +369,6 @@ function getLegacySiteKey() {
     return match ? match[0] : getSiteKey()
 }
 
-function isIgnoredSite() {
-    let hostname = getSiteKey()
-    let ignoredHosts = ['qingwapt.com', 'audiences.me', 'hdarea.club', 'hhanclub.net', 'monikadesign.uk']
-    return ignoredHosts.some(site => hostname === site || hostname.endsWith('.' + site))
-}
-
 function getStoredParam(name) {
     let value = GM_getValue(host + "." + name)
     if (!value && legacyHost && legacyHost !== host) {
@@ -379,6 +383,12 @@ function setStoredParam(name, value) {
 
 function isBonusParamPage() {
     return /\/(?:mybonus|bonus)(?:\.php)?(?:[?#/]|$)/i.test(window.location.pathname)
+}
+
+function isExcludedPage() {
+    let hostname = (window.location.hostname || '').replace(/^www\./, '')
+    return (hostname === 'monikadesign.uk' || hostname.endsWith('.monikadesign.uk'))
+        && /^\/users\/[^/]+\/bonus\/formula\/?$/i.test(window.location.pathname)
 }
 
 function parseFirstNumber(text) {
@@ -495,17 +505,106 @@ function getGeneralSeedRows($) {
     return bestRows
 }
 
+const formulaProfiles = {
+    default: {
+        name: 'NexusPHP',
+        requiredParams: ['T0', 'N0', 'B0', 'L'],
+        supportsBonusChart: true,
+        columnTitle: 'A@A/GB',
+        columnTip: 'A值@每GB的A值',
+        calcA: function (T, S, N, rowText, params) {
+            var c1 = 1 - Math.pow(10, -(T / params.T0));
+            N = N ? N : 1;
+            var c2 = 1 + Math.pow(2, .5) * Math.pow(10, -(N - 1) / (params.N0 - 1));
+            return c1 * S * c2;
+        },
+        calcB: function (A, params) {
+            return params.B0 * (2 / Math.PI) * Math.atan(A / params.L)
+        }
+    },
+    audiences: {
+        name: 'Audiences',
+        requiredParams: ['T0', 'N0', 'L'],
+        supportsBonusChart: false,
+        columnTitle: 'A@A/GB',
+        columnTip: '含官组/普通权重的A值@每GB的A值',
+        calcA: function (T, S, N, rowText, params) {
+            N = N ? N : 1;
+            let adjustedSize = S;
+            if (rowText.indexOf('零魔') !== -1) {
+                if (N >= 10) {
+                    return 0;
+                }
+                adjustedSize = S / 5;
+            }
+            let weight = /官组|官組|官方/.test(rowText) ? 1.5 : 0.5;
+            let c1 = 1 - Math.pow(10, -(T / params.T0));
+            let c2 = 1 + Math.pow(2, .5) * Math.pow(10, -(N - 1) / (params.N0 - 1));
+            return c1 * adjustedSize * c2 * weight;
+        }
+    },
+    hdarea: {
+        name: 'HDArea v2',
+        requiredParams: [],
+        supportsBonusChart: false,
+        columnTitle: 'Score@Score/GB',
+        columnTip: 'HDArea新版算法单种预估分@每GB预估分，未扣除全局上限',
+        calcA: function (T, S, N) {
+            N = N ? N : 1;
+            let countScore = S > 5 ? 1 : 0;
+            let scarcityScore = S * (1 + Math.max(T, 0) * 0.02) * (1 + 1 / N) * 0.05;
+            return countScore + scarcityScore;
+        }
+    },
+    hhanclub: {
+        name: 'HHANClub',
+        requiredParams: [],
+        supportsBonusChart: false,
+        disableTorrentCalc: true,
+        unsupportedMessage: 'HHANClub魔力页未提供完整基础公式参数，暂不计算单种A值，避免显示错误结果。'
+    }
+}
+
+function getFormulaProfile() {
+    if (host === 'audiences.me') {
+        return formulaProfiles.audiences
+    }
+    if (host === 'hdarea.club') {
+        return formulaProfiles.hdarea
+    }
+    if (host === 'hhanclub.net') {
+        return formulaProfiles.hhanclub
+    }
+    return formulaProfiles.default
+}
+
+function areParamsReady(profile, params) {
+    return profile.requiredParams.every(name => Number.isFinite(params[name]) && params[name] !== 0)
+}
+
+function getCurrentParams(T0, N0, B0, L) {
+    return {T0: Number(T0), N0: Number(N0), B0: Number(B0), L: Number(L)}
+}
+
 function run() {
     var $ = jQuery;
+    let formulaProfile = getFormulaProfile();
+    if (formulaProfile.disableTorrentCalc) {
+        if (!isMybonusPage && !GM_getValue(host + ".unsupportedFormulaNoticeShown")) {
+            GM_setValue(host + ".unsupportedFormulaNoticeShown", true)
+            alert(formulaProfile.unsupportedMessage)
+        }
+        return
+    }
 
 
-    let argsReady = true;
     let T0 = getStoredParam("T0");
     let N0 = getStoredParam("N0");
     let B0 = getStoredParam("B0");
     let L = getStoredParam("L");
-    if (!(T0 && N0 && B0 && L)) {
-        argsReady = false
+    let argsReady = areParamsReady(formulaProfile, getCurrentParams(T0, N0, B0, L));
+    let argsReadyBeforePageParse = argsReady;
+    if (!argsReady) {
         if (!isMybonusPage) {
             alert("未找到魔力值参数,请打开魔力值系统说明获取（/mybonus）");
         }
@@ -514,32 +613,45 @@ function run() {
 
         try {
             let params = getBonusParamsFromPage();
-            if (!(params.T0 && params.N0 && params.B0 && params.L)) {
-                throw new Error("未在页面文本中找到完整的 T0/N0/B0/L 参数");
+            if (Number.isFinite(params.T0)) {
+                T0 = params.T0;
             }
-            T0 = params.T0;
-            N0 = params.N0;
-            B0 = params.B0;
-            L = params.L;
+            if (Number.isFinite(params.N0)) {
+                N0 = params.N0;
+            }
+            if (Number.isFinite(params.B0)) {
+                B0 = params.B0;
+            }
+            if (Number.isFinite(params.L)) {
+                L = params.L;
+            }
+            argsReady = areParamsReady(formulaProfile, getCurrentParams(T0, N0, B0, L));
+            if (!argsReady) {
+                throw new Error("未在页面文本中找到当前站点公式所需参数: " + formulaProfile.requiredParams.join('/'));
+            }
             console.log('数据提取成功:', T0, N0, B0, L);
         } catch (error) {
             console.error('数据提取过程中出现错误:', error);
         }
 
-        if (!argsReady) {
-            if (T0 && N0 && B0 && L) {
-                argsReady = true
-                alert("魔力值参数已更新")
-            } else {
-                T0 = N0 = B0 = L = 0;
-                alert("魔力值参数获取失败,请将Tampermonkey的配置模式修改为高级后手动修改存储配置参数，详见说明文档")
+        if (argsReady) {
+            if (Number.isFinite(Number(T0))) {
+                setStoredParam("T0", T0);
             }
-
-            setStoredParam("T0", T0);
-            setStoredParam("N0", N0);
-            setStoredParam("B0", B0);
-            setStoredParam("L", L);
-
+            if (Number.isFinite(Number(N0))) {
+                setStoredParam("N0", N0);
+            }
+            if (Number.isFinite(Number(B0))) {
+                setStoredParam("B0", B0);
+            }
+            if (Number.isFinite(Number(L))) {
+                setStoredParam("L", L);
+            }
+            if (!argsReadyBeforePageParse && formulaProfile.requiredParams.length) {
+                alert("魔力值参数已更新")
+            }
+        } else if (formulaProfile.requiredParams.length) {
+            alert("魔力值参数获取失败,请将Tampermonkey的配置模式修改为高级后手动修改存储配置参数，详见说明文档")
         }
 
         if (!argsReady) {
@@ -548,12 +660,16 @@ function run() {
         }
 
         function calcB(A) {
-            return B0 * (2 / Math.PI) * Math.atan(A / L)
+            return formulaProfile.calcB(A, getCurrentParams(T0, N0, B0, L))
         }
 
         function calcAbyB(B) {
             //从B值反推A值
             return Math.tan(B / B0 / (2 / Math.PI)) * L
+        }
+
+        if (!formulaProfile.supportsBonusChart) {
+            return
         }
 
         let A = isMTeam ? 0 : parseFloat($("div:contains(' (A = ')")[0].innerText.split(" = ")[1]);
@@ -640,13 +756,7 @@ function run() {
 
 
     function calcA(T, S, N) {
-        var c1 = 1 - Math.pow(10, -(T / T0));
-        // 当断种时，显示续种后的实际值，因为当前状态值无意义
-        N = N ? N : 1;
-        // 当前状态值，加入做种后实际值会小于当前值
-        // TODO: 改为双行显示为当前值和实际值
-        var c2 = 1 + Math.pow(2, .5) * Math.pow(10, -(N - 1) / (N0 - 1));
-        return c1 * S * c2;
+        return formulaProfile.calcA(T, S, N, '', getCurrentParams(T0, N0, B0, L));
     }
 
     /**
@@ -693,7 +803,8 @@ function run() {
         if (!Number.isFinite(T) || !Number.isFinite(S) || !Number.isFinite(N)) {
             return '<span title="无法解析发布时间、体积或做种人数">--</span>';
         }
-        var A = calcA(T, S, N).toFixed(2);
+        var rowText = $this.text();
+        var A = formulaProfile.calcA(T, S, N, rowText, getCurrentParams(T0, N0, B0, L)).toFixed(2);
         var ave = (A / S).toFixed(2);
 
         var textA = '<span>' + A + '@' + ave + '</span>';
@@ -719,7 +830,10 @@ function run() {
         rows.each(function (row) {
             var $this = $(this);
             if (row == 0) {
-                addFlag = $this.text().indexOf('A@A/GB') != -1
+                let headerText = $this.text()
+                addFlag = headerText.indexOf(formulaProfile.columnTitle) != -1
+                    || headerText.indexOf('A@A/GB') != -1
+                    || headerText.indexOf('Score@Score/GB') != -1
                 let columns = detectTorrentColumns($this)
                 i_T = columns.time
                 i_S = columns.size
@@ -729,7 +843,7 @@ function run() {
                     return
                 }
                 if (!addFlag) {
-                    $this.children("td,th").last().before("<td class=\"colhead\" title=\"A值@每GB的A值\">A@A/GB</td>");
+                    $this.children("td,th").last().before("<td class=\"colhead\" title=\"" + formulaProfile.columnTip + "\">" + formulaProfile.columnTitle + "</td>");
                 }
             } else {
                 if (i_T == null || i_S == null || i_N == null || addFlag) {
@@ -827,8 +941,8 @@ let isMybonusPage = isBonusParamPage()
 if (window.location.toString().indexOf("tjupt.org") != -1) {
     isMybonusPage = window.location.toString().indexOf("bonus.php") != -1
 }
-if (isIgnoredSite()) {
-    // ignore sites with unsupported or incompatible bonus formulas
+if (isExcludedPage()) {
+    // skip unsupported pages that users may have matched manually
 } else if (isMTeam) {
     if (isMybonusPage || window.location.toString().indexOf("browse") != -1) {
         MTteamWaitPageLoadAndRun()
@@ -838,10 +952,10 @@ if (isIgnoredSite()) {
 }
 
 var currentUrl = window.location.href;
-if (!isIgnoredSite() && window.onurlchange === null) {
+if (!isExcludedPage() && window.onurlchange === null) {
     // M-Team 页面局部刷新时重新运行函数
     window.addEventListener('urlchange', (info) => {
-        if (!isIgnoredSite()) {
+        if (!isExcludedPage()) {
             MTteamWaitPageLoadAndRun()
         }
     });
